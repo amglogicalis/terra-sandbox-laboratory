@@ -314,7 +314,7 @@ async function main() {
   step('12b', 'Create viewer role (required for IAM evaluation in step 9)');
   let viewerRole;
   viewerRole = await run('createRole: ProjectNova Viewer', async () => {
-    await sleep(800); // wait after bridge exports to avoid SHA conflict
+    await sleep(2000); // wait after bridge exports to avoid SHA conflict
     const r = await lumina.createRole(
       'projectnova-viewer',
       [viewerPolicy?.policyId].filter(Boolean),
@@ -326,7 +326,7 @@ async function main() {
 
   step(13, 'Import external policy (AWS IAM JSON)');
   await run('lumina.importPolicy(aws)', async () => {
-    await sleep(1500); // avoid GitHub SHA 409 conflict after rapid sequential saves
+    await sleep(2000); // avoid GitHub SHA 409 conflict after rapid sequential saves
     const awsPolicy = {
       Version: '2012-10-17',
       Statement: [
