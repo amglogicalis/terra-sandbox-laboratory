@@ -1,0 +1,7 @@
+{
+  "repo": "amglogicalis/terra-sandbox-laboratory",
+  "buildCommand": null,
+  "outputDir": ".",
+  "framework": "Plain HTML",
+  "skipBuild": true
+}

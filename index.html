@@ -1,1 +1,729 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cloud Frontend v2</title><style>body{font-family:Arial;background:#0f172a;color:#fff;display:flex;justify-content:center;align-items:center;height:100vh;margin:0}.card{background:#1e293b;padding:40px;border-radius:16px;text-align:center}.badge{background:#22c55e;padding:8px 14px;border-radius:999px}.version,.new{margin-top:20px;background:#334155;padding:12px;border-radius:10px}.btn{margin-top:10px;padding:10px 18px}.on{color:#22c55e;font-weight:bold}</style></head><body><div class="card"><div class="badge">🟢 ONLINE</div><h1>🚀 Cloud Frontend</h1><div class="version">Versión <b>v2.0.0</b></div><div class="new"><h3>✨ Nueva feature</h3><p>Estado: <span id="s" class="on">ACTIVO</span></p><button class="btn" onclick="t()">Cambiar estado</button></div></div><script>let a=true;function t(){a=!a;const e=document.getElementById("s");e.textContent=a?"ACTIVO":"INACTIVO";e.className=a?"on":"";}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terra Sandbox & Laboratory | Terra Ecosystem</title>
+    <meta name="description" content="Interactive testbed for the entire Terra Titan Stack — LUMINA, ROLLA, WEBBL, and COMBASE, all in one sandbox.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="toast-container"></div>
+
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon"><i class="fa-solid fa-flask-vial"></i></div>
+                <div class="logo-text">
+                    <span class="brand">TERRA</span>
+                    <span class="subbrand">SANDBOX &amp; LAB</span>
+                </div>
+            </div>
+            <nav class="nav-menu">
+                <div class="nav-section">CORE LAB</div>
+                <a href="#" class="nav-item active" data-view="overview"><i class="fa-solid fa-chart-line"></i> Overview &amp; Metrics</a>
+                <a href="#" class="nav-item" data-view="lumina"><i class="fa-solid fa-shield-halved text-accent"></i> LUMINA Auth Suite</a>
+                <a href="#" class="nav-item" data-view="rolla"><i class="fa-solid fa-database text-warning"></i> ROLLA Storage Lab</a>
+                <a href="#" class="nav-item" data-view="webbl"><i class="fa-solid fa-globe text-primary"></i> WEBBL Morphs &amp; CDN</a>
+                <a href="#" class="nav-item" data-view="combase"><i class="fa-solid fa-tower-broadcast text-info"></i> COMBASE Event Bus</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="env-badge"><span class="dot live"></span> Sandbox Environment</div>
+                <p class="footer-note">Terra Titan Stack &bull; $0 Infra</p>
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <h2 id="current-view-title" class="topbar-title">Overview &amp; Metrics</h2>
+                    <span class="badge badge-primary">v1.0.0-lab</span>
+                </div>
+                <div class="auth-section">
+                    <div class="token-input-group" id="token-group">
+                        <i class="fa-brands fa-github text-muted"></i>
+                        <input type="password" id="gh-token" placeholder="GitHub Personal Access Token">
+                        <button id="btn-connect" class="btn btn-primary">Connect PAT</button>
+                    </div>
+                    <div id="user-status-badge" class="user-status-badge hidden">
+                        <i class="fa-regular fa-circle-user"></i>
+                        <span id="user-name-display">Connected</span>
+                        <button id="btn-disconnect" class="btn btn-sm btn-secondary ml-2">Disconnect</button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-scroll">
+
+                <!-- ═══════════════════════════════════════════════ -->
+                <!-- VIEW 1: OVERVIEW                               -->
+                <!-- ═══════════════════════════════════════════════ -->
+                <div class="view-content" id="view-overview">
+                    <div class="hero-banner glass">
+                        <div class="hero-text">
+                            <h1>&#x1F9EA; Terra Ecosystem Sandbox &amp; Laboratory</h1>
+                            <p class="text-muted">Interactive testbed for Lumina Identity, Rolla State, WEBBL Hosting, and COMBASE Event Bus. All engines. One cockpit.</p>
+                        </div>
+                        <button class="btn btn-primary btn-glow" id="btn-run-all-tests">
+                            <i class="fa-solid fa-play"></i> Run Full Diagnostics
+                        </button>
+                    </div>
+
+                    <div class="stats-grid mt-4">
+                        <div class="stat-card glass">
+                            <div class="stat-icon accent"><i class="fa-solid fa-shield-halved"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-label">LUMINA Engine</span>
+                                <span class="stat-value" id="status-lumina">&#x2705; Ready</span>
+                            </div>
+                        </div>
+                        <div class="stat-card glass">
+                            <div class="stat-icon warning"><i class="fa-solid fa-database"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-label">ROLLA Storage</span>
+                                <span class="stat-value" id="status-rolla">&#x2705; Connected</span>
+                            </div>
+                        </div>
+                        <div class="stat-card glass">
+                            <div class="stat-icon primary"><i class="fa-solid fa-globe"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-label">WEBBL Engine</span>
+                                <span class="stat-value" id="status-webbl">&#x2705; Active</span>
+                            </div>
+                        </div>
+                        <div class="stat-card glass">
+                            <div class="stat-icon info"><i class="fa-solid fa-tower-broadcast"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-label">COMBASE Bus</span>
+                                <span class="stat-value" id="status-combase">&#x2705; Listening</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="diagnostics-output" class="hidden glass p-4 mt-4">
+                        <h4><i class="fa-solid fa-terminal text-accent"></i> Diagnostics Output</h4>
+                        <pre id="diag-log" class="json-display mt-2" style="max-height:300px;"></pre>
+                    </div>
+
+                    <h3 class="section-title mt-6">Laboratory Module Suites</h3>
+                    <div class="modules-grid">
+                        <div class="module-card glass" data-nav="lumina">
+                            <div class="module-header">
+                                <i class="fa-solid fa-user-shield module-icon text-accent"></i>
+                                <span class="badge badge-accent">Auth Engine</span>
+                            </div>
+                            <h4>&#x1F510; LUMINA Suite</h4>
+                            <p class="text-muted">Luciole JWT, Pyralis IAM policies, LanternLinks Magic Links, Glowworm Break-Glass, Photuris Vault &amp; Coleoptera Bridge.</p>
+                            <div class="module-footer"><span class="text-small text-muted">6 sub-modules</span> <i class="fa-solid fa-arrow-right text-accent"></i></div>
+                        </div>
+                        <div class="module-card glass" data-nav="rolla">
+                            <div class="module-header">
+                                <i class="fa-solid fa-database module-icon text-warning"></i>
+                                <span class="badge badge-warning">State Engine</span>
+                            </div>
+                            <h4>&#x1F3B3; ROLLA Storage Lab</h4>
+                            <p class="text-muted">Rolla-ball KV mutations, JSON state inspection, transaction log and real-time audit trail.</p>
+                            <div class="module-footer"><span class="text-small text-muted">KV Store + Audit</span> <i class="fa-solid fa-arrow-right text-warning"></i></div>
+                        </div>
+                        <div class="module-card glass" data-nav="webbl">
+                            <div class="module-header">
+                                <i class="fa-solid fa-cloud-arrow-up module-icon text-primary"></i>
+                                <span class="badge badge-primary">CDN &amp; Morphs</span>
+                            </div>
+                            <h4>&#x1F310; WEBBL Engine Lab</h4>
+                            <p class="text-muted">Live Cocoon inspection, Chrysalis framework detector, and serverless Morph function runner.</p>
+                            <div class="module-footer"><span class="text-small text-muted">Chrysalis + Morphs</span> <i class="fa-solid fa-arrow-right text-primary"></i></div>
+                        </div>
+                        <div class="module-card glass" data-nav="combase">
+                            <div class="module-header">
+                                <i class="fa-solid fa-network-wired module-icon text-info"></i>
+                                <span class="badge badge-info">Pub/Sub Bus</span>
+                            </div>
+                            <h4>&#x1F4E1; COMBASE Event Bus</h4>
+                            <p class="text-muted">Real-time event publishing, channel subscriptions, and live cross-module communication stream.</p>
+                            <div class="module-footer"><span class="text-small text-muted">3 channels live</span> <i class="fa-solid fa-arrow-right text-info"></i></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══════════════════════════════════════════════ -->
+                <!-- VIEW 2: LUMINA AUTH SUITE (6 TABS)             -->
+                <!-- ═══════════════════════════════════════════════ -->
+                <div class="view-content hidden" id="view-lumina">
+                    <div class="tab-header glass">
+                        <button class="tab-btn active" data-tab="lumina-luciole"><i class="fa-solid fa-key"></i> Luciole</button>
+                        <button class="tab-btn" data-tab="lumina-pyralis"><i class="fa-solid fa-shield-virus"></i> Pyralis</button>
+                        <button class="tab-btn" data-tab="lumina-lantern"><i class="fa-solid fa-link"></i> LanternLinks</button>
+                        <button class="tab-btn" data-tab="lumina-glowworm"><i class="fa-solid fa-bolt"></i> Glowworm</button>
+                        <button class="tab-btn" data-tab="lumina-photuris"><i class="fa-solid fa-box-archive"></i> Photuris</button>
+                        <button class="tab-btn" data-tab="lumina-coleoptera"><i class="fa-solid fa-bridge"></i> Coleoptera</button>
+                    </div>
+
+                    <!-- ── TAB 1: Luciole JWT ── -->
+                    <div class="tab-content active" id="tab-lumina-luciole">
+                        <div class="grid-2-col mt-4">
+                            <div class="glass p-4">
+                                <h3>&#x1F4A1; Luciole JWT Generator &amp; Signer</h3>
+                                <p class="text-muted text-small mb-4">Issues RS256/Ed25519 signed JWT tokens with custom roles and claims for any Terra IAM role.</p>
+                                <div class="form-group">
+                                    <label>User Identifier (Subject)</label>
+                                    <input type="text" id="luciole-sub" class="input-field" value="usr_terra_admin_99">
+                                </div>
+                                <div class="form-group">
+                                    <label>Assigned IAM Role</label>
+                                    <select id="luciole-role" class="input-field">
+                                        <option value="TerraAdmin">TerraAdmin (Full System Access)</option>
+                                        <option value="DevOpsEngineer">DevOpsEngineer (Deployment &amp; Morphs)</option>
+                                        <option value="DataAnalyst">DataAnalyst (Read-only Rolla DB)</option>
+                                        <option value="GuestUser">GuestUser (Restricted Public)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Custom Claims (JSON)</label>
+                                    <textarea id="luciole-claims" class="code-area" rows="3">{"org": "terra-ecosystem", "env": "sandbox", "region": "eu-west-1"}</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Token Expiration</label>
+                                    <select id="luciole-ttl" class="input-field">
+                                        <option value="3600">1 Hour (Standard Access)</option>
+                                        <option value="86400">24 Hours (Extended Session)</option>
+                                        <option value="900">15 Minutes (Short-lived)</option>
+                                        <option value="60">1 Minute (Testing Only)</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary w-full" id="btn-luciole-sign">
+                                    <i class="fa-solid fa-signature"></i> Generate &amp; Sign Token
+                                </button>
+                            </div>
+                            <div class="glass p-4">
+                                <h3>&#x1F50D; Token Inspector &amp; Verifier</h3>
+                                <div class="form-group">
+                                    <label>Generated JWT Token</label>
+                                    <textarea id="luciole-token-output" class="code-area" rows="5" readonly placeholder="Token will appear here after signing..."></textarea>
+                                </div>
+                                <div class="flex gap-2 mb-3">
+                                    <button class="btn btn-secondary flex-1" id="btn-luciole-verify">
+                                        <i class="fa-solid fa-check-double"></i> Verify Signature
+                                    </button>
+                                    <button class="btn btn-secondary" id="btn-luciole-copy">
+                                        <i class="fa-solid fa-copy"></i>
+                                    </button>
+                                    <button class="btn btn-secondary" id="btn-luciole-jwks">
+                                        <i class="fa-solid fa-code"></i> JWKS
+                                    </button>
+                                </div>
+                                <div class="verify-result hidden" id="luciole-verify-result"></div>
+                                <div class="form-group">
+                                    <label>Decoded Payload</label>
+                                    <pre id="luciole-decoded-json" class="json-display">{
+  "sub": "—",
+  "role": "—",
+  "iat": "—",
+  "exp": "—"
+}</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ── TAB 2: Pyralis IAM ── -->
+                    <div class="tab-content hidden" id="tab-lumina-pyralis">
+                        <div class="grid-2-col mt-4">
+                            <div class="glass p-4">
+                                <h3>&#x1FAB2; Pyralis IAM Policy Evaluator</h3>
+                                <p class="text-muted text-small mb-4">Evaluate explicit Allow/Deny decisions for every role across all Terra resource actions.</p>
+                                <div class="form-group">
+                                    <label>Role Context</label>
+                                    <select id="pyralis-role-select" class="input-field">
+                                        <option value="TerraAdmin">TerraAdmin</option>
+                                        <option value="DevOpsEngineer">DevOpsEngineer</option>
+                                        <option value="DataAnalyst">DataAnalyst</option>
+                                        <option value="GuestUser">GuestUser</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Action</label>
+                                    <select id="pyralis-action-select" class="input-field">
+                                        <option value="webbl:DeployCocoon">webbl:DeployCocoon</option>
+                                        <option value="webbl:DeleteCocoon">webbl:DeleteCocoon</option>
+                                        <option value="webbl:ExecuteMorph">webbl:ExecuteMorph</option>
+                                        <option value="rolla:WriteState">rolla:WriteState</option>
+                                        <option value="rolla:ReadState">rolla:ReadState</option>
+                                        <option value="rolla:DeleteState">rolla:DeleteState</option>
+                                        <option value="lumina:GlowwormBreakGlass">lumina:GlowwormBreakGlass</option>
+                                        <option value="lumina:ManageIdentities">lumina:ManageIdentities</option>
+                                        <option value="combase:PublishEvent">combase:PublishEvent</option>
+                                        <option value="combase:ReadStream">combase:ReadStream</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Target Resource (ARN)</label>
+                                    <input type="text" id="pyralis-resource-arn" class="input-field" value="arn:terra:webbl:cocoon/terra-sandbox-laboratory">
+                                </div>
+                                <button class="btn btn-accent w-full" id="btn-pyralis-eval">
+                                    <i class="fa-solid fa-calculator"></i> Evaluate Permission
+                                </button>
+                                <button class="btn btn-secondary w-full mt-2" id="btn-pyralis-matrix">
+                                    <i class="fa-solid fa-table"></i> Show Full Role Matrix
+                                </button>
+                            </div>
+                            <div class="glass p-4">
+                                <h3>&#x1F4CA; Evaluation Result &amp; Policy</h3>
+                                <div id="pyralis-decision-box" class="decision-box decision-pending">
+                                    <i class="fa-solid fa-hourglass-start"></i>
+                                    <span>Select action and click Evaluate</span>
+                                </div>
+                                <h4 class="mt-4 mb-2">Effective Policy Document</h4>
+                                <pre id="pyralis-policy-json" class="json-display" style="max-height: 280px;">// Policy will load here after evaluation</pre>
+                            </div>
+                        </div>
+                        <!-- Full Role Matrix -->
+                        <div class="glass p-4 mt-4 hidden" id="pyralis-matrix-panel">
+                            <h4 class="mb-3">&#x1F5C3; Full Pyralis Role Permission Matrix</h4>
+                            <div class="table-scroll">
+                                <table class="data-table" id="pyralis-matrix-table"></table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ── TAB 3: LanternLinks ── -->
+                    <div class="tab-content hidden" id="tab-lumina-lantern">
+                        <div class="glass p-4 mt-4">
+                            <h3>LanternLinks &#x1F3EE; Passwordless Auth Engine</h3>
+                            <p class="text-muted text-small mb-4">Generates zero-cost cryptographic OTPs and magic login links with expiration timers — no passwords, no servers.</p>
+                            <div class="grid-2-col gap-4">
+                                <div>
+                                    <div class="form-group">
+                                        <label>Target Email Address</label>
+                                        <input type="email" id="lantern-email" class="input-field" value="developer@terra-ecosystem.io">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Link Expiry</label>
+                                        <select id="lantern-ttl" class="input-field">
+                                            <option value="600">10 Minutes</option>
+                                            <option value="300">5 Minutes</option>
+                                            <option value="3600">1 Hour</option>
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-primary w-full" id="btn-lantern-generate">
+                                        <i class="fa-solid fa-paper-plane"></i> Issue Magic Link &amp; OTP
+                                    </button>
+                                    <div id="lantern-expiry-bar" class="hidden mt-3">
+                                        <label class="text-small text-muted">Link expires in: <span id="lantern-countdown" class="text-accent"></span></label>
+                                        <div class="progress-bar"><div id="lantern-progress" class="progress-fill"></div></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="form-group">
+                                        <label>Generated Magic Link URL</label>
+                                        <div class="flex gap-2">
+                                            <input type="text" id="lantern-url-preview" class="input-field flex-1" readonly placeholder="Magic link URL...">
+                                            <button class="btn btn-secondary" id="btn-lantern-copy-url"><i class="fa-solid fa-copy"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>6-Digit OTP Token</label>
+                                        <div class="otp-display" id="lantern-otp-display">
+                                            <span class="otp-digit" id="otp-d1">-</span>
+                                            <span class="otp-digit" id="otp-d2">-</span>
+                                            <span class="otp-digit" id="otp-d3">-</span>
+                                            <span class="otp-digit" id="otp-d4">-</span>
+                                            <span class="otp-digit" id="otp-d5">-</span>
+                                            <span class="otp-digit" id="otp-d6">-</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <input type="text" id="lantern-otp-input" class="input-field flex-1" placeholder="Enter OTP to validate..." maxlength="6" style="font-family: var(--font-mono); letter-spacing: 4px; text-align: center;">
+                                        <button class="btn btn-accent" id="btn-lantern-verify-otp"><i class="fa-solid fa-check"></i> Validate</button>
+                                    </div>
+                                    <div id="lantern-verify-result" class="hidden mt-2"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ── TAB 4: Glowworm Break-Glass ── -->
+                    <div class="tab-content hidden" id="tab-lumina-glowworm">
+                        <div class="glass p-4 mt-4">
+                            <h3>&#x26A1; Glowworm Emergency Break-Glass Credentials</h3>
+                            <p class="text-muted text-small mb-4">Issues temporary 15-minute emergency access credentials for disaster recovery. All invocations are audited.</p>
+
+                            <div class="grid-2-col gap-4">
+                                <div>
+                                    <div class="form-group">
+                                        <label>Requesting User Identity</label>
+                                        <input type="text" id="glowworm-user" class="input-field" value="usr_terra_admin_99">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Emergency Incident Reason</label>
+                                        <textarea id="glowworm-reason" class="code-area" rows="3">Production outage verification - Sandbox Emergency Overhaul #INC-2026-001</textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Emergency Scope</label>
+                                        <select id="glowworm-scope" class="input-field">
+                                            <option value="read-only">Read-Only Audit (Safest)</option>
+                                            <option value="full-admin">Full Admin Override (Dangerous)</option>
+                                            <option value="rolla-restore">ROLLA State Restoration</option>
+                                            <option value="lumina-reset">LUMINA Identity Reset</option>
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-danger w-full" id="btn-glowworm-trigger">
+                                        <i class="fa-solid fa-triangle-exclamation"></i> Issue 15-Min Break-Glass Token
+                                    </button>
+                                </div>
+                                <div>
+                                    <div id="glowworm-inactive" class="glass p-4 text-center" style="border: 1px solid var(--border);">
+                                        <i class="fa-solid fa-shield-halved" style="font-size:3rem; color: var(--text-muted); opacity:0.3;"></i>
+                                        <p class="text-muted mt-3">No active break-glass session.<br>Issue a token to activate emergency access.</p>
+                                    </div>
+                                    <div id="glowworm-active-card" class="glass p-4 hidden" style="border: 1px solid var(--danger);">
+                                        <div class="flex align-center justify-between mb-3">
+                                            <span class="badge badge-danger"><i class="fa-solid fa-bolt"></i> BREAK-GLASS ACTIVE</span>
+                                            <span id="glowworm-timer" class="text-danger" style="font-family: var(--font-mono); font-weight:700; font-size:1.3rem;">15:00</span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="text-small text-muted">Emergency Access Key</label>
+                                            <div class="flex gap-2">
+                                                <code id="glowworm-key-display" class="code-block flex-1" style="font-size:0.8rem;">gw_bg_...</code>
+                                                <button class="btn btn-sm btn-secondary" id="btn-glowworm-copy"><i class="fa-solid fa-copy"></i></button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="text-small text-muted">Scope</label>
+                                            <p id="glowworm-scope-display" class="text-small" style="color: var(--danger);">—</p>
+                                        </div>
+                                        <button class="btn btn-secondary w-full mt-2" id="btn-glowworm-revoke">
+                                            <i class="fa-solid fa-ban"></i> Revoke Immediately
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="glass p-4 mt-4">
+                                <h4><i class="fa-solid fa-clock-rotate-left text-muted"></i> Break-Glass Audit Trail</h4>
+                                <ul id="glowworm-audit" class="audit-log mt-2">
+                                    <li><span class="text-muted">No break-glass events recorded this session.</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ── TAB 5: Photuris Vault ── -->
+                    <div class="tab-content hidden" id="tab-lumina-photuris">
+                        <div class="glass p-4 mt-4">
+                            <h3>&#x1F30C; Photuris Identity Vault</h3>
+                            <p class="text-muted text-small mb-4">Immutable encrypted identity store backed by <code>.lumina-storage</code>. CRUD operations on Terra user identities.</p>
+
+                            <div class="flex gap-2 mb-4">
+                                <input type="text" id="photuris-search" class="input-field flex-1" placeholder="Search identities by name, email or role...">
+                                <button class="btn btn-primary" id="btn-photuris-add"><i class="fa-solid fa-user-plus"></i> Add Identity</button>
+                                <button class="btn btn-secondary" id="btn-photuris-export"><i class="fa-solid fa-download"></i> Export</button>
+                            </div>
+
+                            <table class="data-table" id="photuris-table">
+                                <thead>
+                                    <tr>
+                                        <th>User ID</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Created</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="photuris-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ── TAB 6: Coleoptera Bridge ── -->
+                    <div class="tab-content hidden" id="tab-lumina-coleoptera">
+                        <div class="glass p-4 mt-4">
+                            <h3>&#x1F41D; Coleoptera Multicloud Identity Broker</h3>
+                            <p class="text-muted text-small mb-4">Translates Terra Pyralis JWT tokens to external cloud provider credentials — zero configuration SAML/OIDC bridge.</p>
+
+                            <div class="form-group mb-4">
+                                <label>Source Terra JWT Token (paste Luciole token here)</label>
+                                <textarea id="coleoptera-source-token" class="code-area" rows="3" placeholder="Paste a token generated from the Luciole tab..."></textarea>
+                            </div>
+
+                            <div class="grid-3-col gap-4">
+                                <div class="provider-card glass p-4 text-center">
+                                    <i class="fa-brands fa-aws provider-icon text-warning"></i>
+                                    <h4>AWS IAM AssumeRole</h4>
+                                    <p class="text-muted text-small mb-3">Maps Terra JWT to AWS STS AssumeRoleWithWebIdentity credentials</p>
+                                    <button class="btn btn-secondary btn-sm w-full" id="btn-coleoptera-aws">Translate to AWS</button>
+                                    <pre id="coleoptera-aws-output" class="json-display mt-3 text-left" style="max-height:150px; font-size:0.7rem;">// AWS credentials...</pre>
+                                </div>
+                                <div class="provider-card glass p-4 text-center">
+                                    <i class="fa-solid fa-bolt provider-icon text-accent"></i>
+                                    <h4>Supabase RLS Token</h4>
+                                    <p class="text-muted text-small mb-3">Maps Pyralis roles to Supabase Row Level Security JWT claims</p>
+                                    <button class="btn btn-secondary btn-sm w-full" id="btn-coleoptera-supabase">Translate to Supabase</button>
+                                    <pre id="coleoptera-supabase-output" class="json-display mt-3 text-left" style="max-height:150px; font-size:0.7rem;">// Supabase token...</pre>
+                                </div>
+                                <div class="provider-card glass p-4 text-center">
+                                    <i class="fa-solid fa-lock provider-icon text-primary"></i>
+                                    <h4>Auth0 OAuth2 Bridge</h4>
+                                    <p class="text-muted text-small mb-3">Federated SAML 2.0 / OIDC token exchange with Auth0 tenant</p>
+                                    <button class="btn btn-secondary btn-sm w-full" id="btn-coleoptera-auth0">Translate to Auth0</button>
+                                    <pre id="coleoptera-auth0-output" class="json-display mt-3 text-left" style="max-height:150px; font-size:0.7rem;">// Auth0 token...</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══════════════════════════════════════════════ -->
+                <!-- VIEW 3: ROLLA STORAGE LAB                      -->
+                <!-- ═══════════════════════════════════════════════ -->
+                <div class="view-content hidden" id="view-rolla">
+                    <div class="grid-2-col">
+                        <div class="glass p-4">
+                            <h3>&#x1F3B3; Rolla-ball Key-Value Workbench</h3>
+                            <p class="text-muted text-small mb-4">Write, read, and delete state entries. Values can be JSON objects or plain strings.</p>
+
+                            <div class="form-group">
+                                <label>Namespace / Key</label>
+                                <input type="text" id="rolla-key-input" class="input-field" value="config/laboratory_mode">
+                            </div>
+                            <div class="form-group">
+                                <label>State Value (JSON or String)</label>
+                                <textarea id="rolla-val-input" class="code-area" rows="5">{
+  "active": true,
+  "labVersion": "1.0.0",
+  "titansConnected": ["LUMINA", "ROLLA", "WEBBL", "COMBASE"],
+  "launchedAt": "2026-07-31T14:00:00Z"
+}</textarea>
+                            </div>
+                            <div class="flex gap-2">
+                                <button class="btn btn-primary flex-1" id="btn-rolla-set"><i class="fa-solid fa-floppy-disk"></i> Write Key</button>
+                                <button class="btn btn-secondary" id="btn-rolla-get"><i class="fa-solid fa-download"></i> Read Key</button>
+                                <button class="btn btn-danger" id="btn-rolla-del"><i class="fa-solid fa-trash"></i> Delete</button>
+                            </div>
+                            <button class="btn btn-secondary w-full mt-2" id="btn-rolla-clear-all">
+                                <i class="fa-solid fa-rotate-left"></i> Reset DB to Defaults
+                            </button>
+                        </div>
+
+                        <div class="glass p-4">
+                            <h3>&#x1F4CB; DB State Inspector</h3>
+                            <div class="flex align-center justify-between mb-2">
+                                <label>All Database Entries (<span id="rolla-entry-count">0</span> keys)</label>
+                                <button class="btn btn-sm btn-secondary" id="btn-rolla-refresh-view"><i class="fa-solid fa-arrows-rotate"></i></button>
+                            </div>
+                            <pre id="rolla-state-json" class="json-display" style="max-height: 240px;">{}</pre>
+                            <h4 class="mt-4">Mutation Audit Log</h4>
+                            <ul id="rolla-audit-log" class="audit-log">
+                                <li><span class="text-muted text-small">System initialized. Awaiting mutations...</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══════════════════════════════════════════════ -->
+                <!-- VIEW 4: WEBBL ENGINE LAB                        -->
+                <!-- ═══════════════════════════════════════════════ -->
+                <div class="view-content hidden" id="view-webbl">
+                    <div class="glass p-4 mb-4">
+                        <div class="flex align-center justify-between">
+                            <div>
+                                <h3>&#x1F310; WEBBL Cocoon &amp; Morphs Engine Lab</h3>
+                                <p class="text-muted text-small">Live status from GitHub API and serverless Morph function runner.</p>
+                            </div>
+                            <button class="btn btn-primary" id="btn-webbl-refresh"><i class="fa-solid fa-arrows-rotate"></i> Refresh Status</button>
+                        </div>
+                    </div>
+
+                    <div class="grid-2-col">
+                        <div class="glass p-4">
+                            <h4>&#x1FAE7; Chrysalis Framework Detector</h4>
+                            <p class="text-muted text-small mb-3">Simulates Chrysalis detection logic against mock project signatures.</p>
+                            <div class="form-group">
+                                <label>Simulated Project Type</label>
+                                <select id="chrysalis-project-type" class="input-field">
+                                    <option value="plain-html">Plain HTML (this sandbox)</option>
+                                    <option value="vite">Vite (React/Vue)</option>
+                                    <option value="nextjs">Next.js</option>
+                                    <option value="nuxt">Nuxt 3</option>
+                                    <option value="hugo">Hugo</option>
+                                    <option value="jekyll">Jekyll</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-secondary w-full mb-3" id="btn-chrysalis-detect">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Run Chrysalis Scan
+                            </button>
+                            <pre id="chrysalis-result-json" class="json-display">// Chrysalis detection result will appear here...</pre>
+                        </div>
+
+                        <div class="glass p-4">
+                            <h4>&#x26A1; Morphs Function Executor</h4>
+                            <p class="text-muted text-small mb-3">Simulate serverless Morph function invocations.</p>
+                            <div class="form-group">
+                                <label>Select Morph Function</label>
+                                <select id="morph-select" class="input-field">
+                                    <option value="morph-health-check">morph-health-check.js</option>
+                                    <option value="morph-identity-sync">morph-identity-sync.js</option>
+                                    <option value="morph-event-relay">morph-event-relay.js</option>
+                                    <option value="morph-state-snapshot">morph-state-snapshot.js</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Morph Payload (JSON)</label>
+                                <textarea id="morph-payload" class="code-area" rows="3">{"trigger": "manual", "env": "sandbox"}</textarea>
+                            </div>
+                            <button class="btn btn-accent w-full" id="btn-run-morph">
+                                <i class="fa-solid fa-play"></i> Invoke Morph Function
+                            </button>
+                            <pre id="morph-output-json" class="json-display mt-3">// Morph execution output will appear here...</pre>
+                        </div>
+                    </div>
+
+                    <!-- Cocoon Status -->
+                    <div class="glass p-4 mt-4">
+                        <h4>&#x1F4E6; Current Cocoon: terra-sandbox-laboratory</h4>
+                        <div id="webbl-cocoon-status" class="cocoon-status-panel mt-3">
+                            <div class="status-row">
+                                <span class="text-muted text-small">Repository</span>
+                                <span class="text-small">amglogicalis/terra-sandbox-laboratory</span>
+                            </div>
+                            <div class="status-row">
+                                <span class="text-muted text-small">Pages URL</span>
+                                <a href="https://amglogicalis.github.io/terra-sandbox-laboratory/" target="_blank" class="text-small text-primary">https://amglogicalis.github.io/terra-sandbox-laboratory/</a>
+                            </div>
+                            <div class="status-row">
+                                <span class="text-muted text-small">Framework</span>
+                                <span class="badge badge-primary">Plain HTML</span>
+                            </div>
+                            <div class="status-row">
+                                <span class="text-muted text-small">Status</span>
+                                <span class="badge badge-accent">&#x1F7E2; Live</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══════════════════════════════════════════════ -->
+                <!-- VIEW 5: COMBASE EVENT BUS                       -->
+                <!-- ═══════════════════════════════════════════════ -->
+                <div class="view-content hidden" id="view-combase">
+                    <div class="grid-2-col">
+                        <div class="glass p-4">
+                            <h3>&#x1F4E1; COMBASE Event Publisher</h3>
+                            <p class="text-muted text-small mb-4">Publish structured domain events across Terra engine channels.</p>
+
+                            <div class="form-group">
+                                <label>Target Channel</label>
+                                <select id="combase-channel" class="input-field">
+                                    <option value="lumina.auth.events">lumina.auth.events</option>
+                                    <option value="lumina.vault.mutations">lumina.vault.mutations</option>
+                                    <option value="rolla.state.changes">rolla.state.changes</option>
+                                    <option value="webbl.deploy.notifications">webbl.deploy.notifications</option>
+                                    <option value="webbl.morph.invocations">webbl.morph.invocations</option>
+                                    <option value="terra.system.heartbeat">terra.system.heartbeat</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Event Name</label>
+                                <input type="text" id="combase-event-name" class="input-field" value="UserAuthenticated">
+                            </div>
+                            <div class="form-group">
+                                <label>Event Priority</label>
+                                <select id="combase-priority" class="input-field">
+                                    <option value="normal">Normal</option>
+                                    <option value="high">High</option>
+                                    <option value="critical">Critical</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Payload (JSON)</label>
+                                <textarea id="combase-payload" class="code-area" rows="5">{
+  "userId": "usr_terra_admin_99",
+  "role": "TerraAdmin",
+  "action": "login",
+  "ip": "10.0.0.1",
+  "timestamp": "2026-07-31T14:53:00Z"
+}</textarea>
+                            </div>
+                            <button class="btn btn-primary w-full" id="btn-combase-publish">
+                                <i class="fa-solid fa-bullhorn"></i> Publish Event
+                            </button>
+                            <button class="btn btn-secondary w-full mt-2" id="btn-combase-burst">
+                                <i class="fa-solid fa-bolt"></i> Burst Test (10 Events)
+                            </button>
+                        </div>
+
+                        <div class="glass p-4">
+                            <div class="flex align-center justify-between mb-3">
+                                <h3>&#x1F4FA; Live Event Stream</h3>
+                                <div class="flex gap-2">
+                                    <select id="combase-filter" class="input-field input-sm">
+                                        <option value="all">All Channels</option>
+                                        <option value="lumina.auth.events">lumina.auth.events</option>
+                                        <option value="rolla.state.changes">rolla.state.changes</option>
+                                        <option value="webbl.deploy.notifications">webbl.deploy.notifications</option>
+                                    </select>
+                                    <button class="btn btn-sm btn-secondary" id="btn-combase-clear"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </div>
+                            <div class="stream-stats mb-3">
+                                <span><i class="fa-solid fa-circle text-accent" style="font-size:8px;"></i> <span id="combase-event-count">1</span> events</span>
+                                <span><i class="fa-solid fa-signal text-primary"></i> <span id="combase-channel-count">3</span> channels</span>
+                            </div>
+                            <div id="combase-stream-log" class="stream-log">
+                                <div class="stream-item">
+                                    <span class="stream-time">init</span>
+                                    <span class="badge badge-info stream-channel">terra.system.heartbeat</span>
+                                    <span class="stream-msg">COMBASE Event Bus initialized. Listening on 6 channels.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- end content-scroll -->
+        </main>
+    </div><!-- end layout -->
+
+    <!-- ═══ MODALS ═══ -->
+    <div class="modal-backdrop hidden" id="modal-add-identity">
+        <div class="modal glass">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-user-plus text-primary"></i> Add Photuris Identity</h3>
+                <button class="btn-close" id="btn-close-modal-identity"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="new-user-name" class="input-field" placeholder="e.g. Adrian Terra">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="new-user-email" class="input-field" placeholder="e.g. adrian@terra.io">
+                </div>
+                <div class="form-group">
+                    <label>IAM Role</label>
+                    <select id="new-user-role" class="input-field">
+                        <option value="TerraAdmin">TerraAdmin</option>
+                        <option value="DevOpsEngineer">DevOpsEngineer</option>
+                        <option value="DataAnalyst">DataAnalyst</option>
+                        <option value="GuestUser">GuestUser</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancel-identity">Cancel</button>
+                <button class="btn btn-primary" id="btn-save-identity">Save Identity</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
