@@ -89,11 +89,15 @@ async function main() {
     return u;
   });
 
+  await sleep(1000);
+
   teamUser = await run('createUser: Maria (developer)', async () => {
     const u = await lumina.createUser('maria@projectnova.io', 'Maria Dev', 'developer', 'DevPass2026!');
     ok(`User created → ${u.id} | ${u.email} | role: ${u.role}`);
     return u;
   });
+
+  await sleep(1000);
 
   guestUser = await run('createUser: Guest (viewer)', async () => {
     const u = await lumina.createUser('viewer@external.io', 'Guest Viewer', 'viewer');
@@ -112,6 +116,7 @@ async function main() {
   step(4, 'Authenticate users (Luciole token generation)');
   let alexSession;
   await run('lumina.authenticate(alex)', async () => {
+    await sleep(1000);
     const auth = await lumina.authenticate('alex@projectnova.io', 'SecureP@ss2026!');
     if (!auth.success) throw new Error(auth.error);
     alexSession = auth.session;
@@ -121,6 +126,7 @@ async function main() {
   });
 
   await run('lumina.authenticate(maria)', async () => {
+    await sleep(1000);
     const auth = await lumina.authenticate('maria@projectnova.io', 'DevPass2026!');
     if (!auth.success) throw new Error(auth.error);
     ok(`Authenticated → session: ${auth.session?.sessionId}`);
@@ -159,13 +165,14 @@ async function main() {
   let adminPolicy, devPolicy, viewerPolicy;
 
   adminPolicy = await run('createPolicy: ProjectNova Admin', async () => {
+    await sleep(1000);
     const p = await lumina.createPolicy(
       'projectnova-admin-policy',
       [
-        { effect: 'Allow', actions: ['*'], resources: ['arn:terra:projectnova:*'] },
-        { effect: 'Allow', actions: ['rolla:*'], resources: ['arn:terra:rolla:*'] },
-        { effect: 'Allow', actions: ['webbl:*'], resources: ['arn:terra:webbl:*'] },
-        { effect: 'Allow', actions: ['combase:*'], resources: ['arn:terra:combase:*'] },
+        { Effect: 'Allow', Action: ['*'], Resource: ['arn:terra:projectnova:*'] },
+        { Effect: 'Allow', Action: ['rolla:*'], Resource: ['arn:terra:rolla:*'] },
+        { Effect: 'Allow', Action: ['webbl:*'], Resource: ['arn:terra:webbl:*'] },
+        { Effect: 'Allow', Action: ['combase:*'], Resource: ['arn:terra:combase:*'] },
       ],
       'Full admin access to all ProjectNova resources'
     );
@@ -174,13 +181,14 @@ async function main() {
   });
 
   devPolicy = await run('createPolicy: Developer (no delete)', async () => {
+    await sleep(1000);
     const p = await lumina.createPolicy(
       'projectnova-developer-policy',
       [
-        { effect: 'Allow', actions: ['rolla:get', 'rolla:put', 'rolla:list'], resources: ['arn:terra:rolla:projectnova-*'] },
-        { effect: 'Allow', actions: ['webbl:deploy', 'webbl:list'], resources: ['arn:terra:webbl:cocoon/projectnova-*'] },
-        { effect: 'Allow', actions: ['combase:publish', 'combase:subscribe'], resources: ['arn:terra:combase:*'] },
-        { effect: 'Deny',  actions: ['rolla:delete', 'webbl:delete'], resources: ['*'] },
+        { Effect: 'Allow', Action: ['rolla:get', 'rolla:put', 'rolla:list'], Resource: ['arn:terra:rolla:projectnova-*'] },
+        { Effect: 'Allow', Action: ['webbl:deploy', 'webbl:list'], Resource: ['arn:terra:webbl:cocoon/projectnova-*'] },
+        { Effect: 'Allow', Action: ['combase:publish', 'combase:subscribe'], Resource: ['arn:terra:combase:*'] },
+        { Effect: 'Deny',  Action: ['rolla:delete', 'webbl:delete'], Resource: ['*'] },
       ],
       'Developer access — no destructive operations'
     );
@@ -189,12 +197,13 @@ async function main() {
   });
 
   viewerPolicy = await run('createPolicy: Viewer (read-only)', async () => {
+    await sleep(1000);
     const p = await lumina.createPolicy(
       'projectnova-viewer-policy',
       [
-        { effect: 'Allow', actions: ['rolla:get', 'rolla:list'], resources: ['arn:terra:rolla:projectnova-assets'] },
-        { effect: 'Allow', actions: ['combase:subscribe'], resources: ['arn:terra:combase:channel/public.*'] },
-        { effect: 'Deny',  actions: ['webbl:*', 'rolla:put', 'rolla:delete'], resources: ['*'] },
+        { Effect: 'Allow', Action: ['rolla:get', 'rolla:list'], Resource: ['arn:terra:rolla:projectnova-assets'] },
+        { Effect: 'Allow', Action: ['combase:subscribe'], Resource: ['arn:terra:combase:channel/public.*'] },
+        { Effect: 'Deny',  Action: ['webbl:*', 'rolla:put', 'rolla:delete'], Resource: ['*'] },
       ],
       'Read-only viewer access'
     );
@@ -206,6 +215,7 @@ async function main() {
   let adminRole, devRole;
 
   adminRole = await run('createRole: ProjectNova Admin', async () => {
+    await sleep(1000);
     const r = await lumina.createRole(
       'projectnova-admin',
       [adminPolicy?.policyId].filter(Boolean),
@@ -216,6 +226,7 @@ async function main() {
   });
 
   devRole = await run('createRole: ProjectNova Developer', async () => {
+    await sleep(1000);
     const r = await lumina.createRole(
       'projectnova-developer',
       [devPolicy?.policyId].filter(Boolean),
@@ -571,8 +582,16 @@ async function main() {
 
   step(25, 'Create a feature branch (Time Machine)');
   await run('combase.createBranch("feature/analytics")', async () => {
-    await combase.createBranch('feature/analytics');
-    ok('Branch "feature/analytics" created in .combase-storage');
+    try {
+      await combase.createBranch('feature/analytics');
+      ok('Branch "feature/analytics" created in .combase-storage');
+    } catch (e) {
+      if (e.message.includes('Reference already exists')) {
+        ok('Branch "feature/analytics" already exists — skipping creation');
+      } else {
+        throw e;
+      }
+    }
   });
 
   await run('combase.listBranches()', async () => {
