@@ -17,6 +17,9 @@ import { Webbl }  from 'terra-webbl';
 const TOKEN = process.env.GITHUB_TOKEN;
 if (!TOKEN) { console.error('❌ Set GITHUB_TOKEN env var first.'); process.exit(1); }
 
+// ── Sleep helper to avoid GitHub API 409 SHA conflicts ────────────────────
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
 // ── Formatting helpers ─────────────────────────────────────────────────────
 const c = {
   reset: '\x1b[0m', bold: '\x1b[1m', dim: '\x1b[2m',
@@ -260,9 +263,15 @@ async function main() {
   await run('lumina.createMagicLink()', async () => {
     const link = lumina.createMagicLink('alex@projectnova.io', 'https://projectnova.io/auth', 600);
     ok(`Magic link generated for alex@projectnova.io`);
-    info(`OTP: ${link.otp}`);
-    info(`URL: ${link.magicLink.slice(0, 80)}...`);
+    // LanternLinks returns: { token, email, url, createdAt, expiresAt, used }
+    // No OTP in this engine — token IS the magic credential
+    info(`Token: ${link.token?.slice(0, 30)}...`);
+    info(`URL:   ${link.url?.slice(0, 80)}...`);
     info(`Expires: ${new Date(link.expiresAt).toLocaleTimeString()}`);
+
+    // Immediately verify the magic link token
+    const verified = lumina.verifyMagicLink(link.token);
+    ok(`Magic link verification: valid=${verified.valid}, email=${verified.email}`);
     return link;
   });
 
@@ -291,8 +300,22 @@ async function main() {
     });
   }
 
+  step('12b', 'Create viewer role (required for IAM evaluation in step 9)');
+  let viewerRole;
+  viewerRole = await run('createRole: ProjectNova Viewer', async () => {
+    await sleep(800); // wait after bridge exports to avoid SHA conflict
+    const r = await lumina.createRole(
+      'projectnova-viewer',
+      [viewerPolicy?.policyId].filter(Boolean),
+      'Read-only viewer, no write or deploy'
+    );
+    ok(`Viewer role created → ${r.roleId}`);
+    return r;
+  });
+
   step(13, 'Import external policy (AWS IAM JSON)');
   await run('lumina.importPolicy(aws)', async () => {
+    await sleep(1500); // avoid GitHub SHA 409 conflict after rapid sequential saves
     const awsPolicy = {
       Version: '2012-10-17',
       Statement: [
@@ -303,6 +326,24 @@ async function main() {
     const imported = await lumina.importPolicy('aws', awsPolicy, 'aws-s3-projectnova');
     ok(`AWS IAM policy imported → ${imported.policyId} | provider: ${imported.provider}`);
     return imported;
+  });
+
+  // Re-run IAM evaluations now that all roles exist in vault
+  step('9b', 'Re-evaluate IAM access with all roles loaded');
+  await run('evaluateRoleAccess: admin → webbl:deploy', async () => {
+    const result = await lumina.evaluateRoleAccess('projectnova-admin', 'webbl:deploy', 'arn:terra:webbl:cocoon/projectnova-landing');
+    ok(`Decision: ${result.allowed ? '✅ ALLOW' : '🚫 DENY'} → ${result.reason}`);
+    return result;
+  });
+  await run('evaluateRoleAccess: developer → rolla:delete', async () => {
+    const result = await lumina.evaluateRoleAccess('projectnova-developer', 'rolla:delete', 'arn:terra:rolla:projectnova-assets');
+    ok(`Decision: ${result.allowed ? '✅ ALLOW' : '🚫 DENY'} → ${result.reason}`);
+    return result;
+  });
+  await run('evaluateRoleAccess: viewer → webbl:deploy', async () => {
+    const result = await lumina.evaluateRoleAccess('projectnova-viewer', 'webbl:deploy', 'arn:terra:webbl:cocoon/projectnova-*');
+    ok(`Decision: ${result.allowed ? '✅ ALLOW' : '🚫 DENY'} → ${result.reason}`);
+    return result;
   });
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -461,7 +502,9 @@ async function main() {
     return r;
   });
 
+  // Each CREATE TABLE must wait for GitHub to confirm the previous SHA
   await run('CREATE TABLE deployments', async () => {
+    await sleep(1200);
     const r = await combase.query(`CREATE TABLE deployments (id INTEGER PRIMARY KEY, cocoon TEXT, version TEXT, status TEXT, deployedAt TEXT)`);
     ok(`Table "deployments" created → ${r.message || 'OK'}`);
     return r;
@@ -469,13 +512,17 @@ async function main() {
 
   step(23, 'Insert real data from our integration run');
   await run('INSERT users', async () => {
+    await sleep(1200);
     await combase.query(`INSERT INTO users (id, email, name, role, createdAt) VALUES (1, 'alex@projectnova.io', 'Alex Nova', 'admin', '${new Date().toISOString()}')`);
+    await sleep(800);
     await combase.query(`INSERT INTO users (id, email, name, role, createdAt) VALUES (2, 'maria@projectnova.io', 'Maria Dev', 'developer', '${new Date().toISOString()}')`);
+    await sleep(800);
     await combase.query(`INSERT INTO users (id, email, name, role, createdAt) VALUES (3, 'viewer@external.io', 'Guest Viewer', 'viewer', '${new Date().toISOString()}')`);
     ok('3 users inserted into projectnova_db.users');
   });
 
   await run('INSERT projects', async () => {
+    await sleep(1000);
     await combase.query(`INSERT INTO projects (id, name, owner, status, tier, createdAt) VALUES (1, 'ProjectNova', 'alex@projectnova.io', 'active', 'enterprise', '${new Date().toISOString()}')`);
     ok('ProjectNova inserted into projects table');
   });
@@ -490,12 +537,14 @@ async function main() {
       [6, 'webbl.deploy',  'CocoonDeployed','{"cocoon":"terra-sandbox-laboratory"}'],
     ];
     for (const [id, channel, event, payload] of events) {
+      await sleep(900);
       await combase.query(`INSERT INTO events (id, channel, event, payload, createdAt) VALUES (${id}, '${channel}', '${event}', '${payload}', '${new Date().toISOString()}')`);
     }
     ok('6 system events inserted');
   });
 
   await run('INSERT deployments', async () => {
+    await sleep(1000);
     await combase.query(`INSERT INTO deployments (id, cocoon, version, status, deployedAt) VALUES (1, 'terra-sandbox-laboratory', 'webbl-v${Date.now()}', 'live', '${new Date().toISOString()}')`);
     ok('Deployment record inserted');
   });
@@ -568,12 +617,26 @@ async function main() {
     return cocoons;
   });
 
-  step(29, 'Get history of terra-sandbox-laboratory cocoon');
-  await run('webbl.getHistory("terra-sandbox-laboratory")', async () => {
-    const history = await webbl.getHistory('amglogicalis/terra-sandbox-laboratory');
+  step(29, 'Get deployment history + list Morphs');
+  await run('webbl.getDeployments(terra-sandbox-laboratory)', async () => {
+    const history = await webbl.getDeployments('amglogicalis/terra-sandbox-laboratory');
     ok(`${history.length} deployment(s) in history`);
-    history.slice(0, 3).forEach(h => info(`  ${h.tag} — ${h.date}`));
+    history.slice(0, 5).forEach(h => info(`  ${h.tag} — ${h.date || h.publishedAt || ''}` ));
     return history;
+  });
+
+  await run('webbl.listMorphs()', async () => {
+    const morphs = await webbl.listMorphs();
+    ok(`${morphs.length} Morph(s) found`);
+    morphs.forEach(m => info(`  ${m.name} → ${m.url || m.repo}`));
+    return morphs;
+  });
+
+  await run('webbl.detectFramework()', async () => {
+    const fw = webbl.detectFramework('C:/mis-proyectos/Terra/terra-sandbox-laboratory');
+    ok(`Framework detected: ${fw.name}`);
+    info(`Build command: ${fw.buildCommand || 'none'} | Output: ${fw.outputDir}`);
+    return fw;
   });
 
   step(30, 'Deploy updated landing page for ProjectNova');
