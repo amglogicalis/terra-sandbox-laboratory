@@ -502,6 +502,7 @@ async function main() {
   });
 
   await run('CREATE TABLE projects', async () => {
+    await sleep(1500);
     const r = await combase.query(`CREATE TABLE projects (id INTEGER PRIMARY KEY, name TEXT, owner TEXT, status TEXT, tier TEXT, createdAt TEXT)`);
     ok(`Table "projects" created → ${r.message || 'OK'}`);
     return r;
