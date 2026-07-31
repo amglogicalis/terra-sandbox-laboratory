@@ -1,0 +1,16 @@
+{
+  "name": "terra-sandbox-integration",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Terra Sandbox & Laboratory — Real end-to-end integration test",
+  "scripts": {
+    "test": "node run-integration.mjs",
+    "lab": "node run-integration.mjs"
+  },
+  "dependencies": {
+    "terra-lumina":  "file:../lumina/Lumina/packages/lumina-sdk",
+    "terra-rolla":   "file:../rolla/Rolla/packages/rolla-sdk",
+    "terra-combase": "file:../combase/Combase/packages/combase-sdk",
+    "terra-webbl":   "file:../webbl/Webbl/packages/webbl-sdk"
+  }
+}
