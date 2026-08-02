@@ -31,6 +31,10 @@
                 <a href="#" class="nav-item" data-view="rolla"><i class="fa-solid fa-database text-warning"></i> ROLLA Storage Lab</a>
                 <a href="#" class="nav-item" data-view="webbl"><i class="fa-solid fa-globe text-primary"></i> WEBBL Morphs &amp; CDN</a>
                 <a href="#" class="nav-item" data-view="combase"><i class="fa-solid fa-tower-broadcast text-info"></i> COMBASE Event Bus</a>
+                
+                <div class="nav-section mt-3">SYNTHETIC STACK</div>
+                <a href="#" class="nav-item" data-view="ballom"><i class="fa-solid fa-masks-theater text-danger"></i> BALLOM Morph Studio</a>
+                <a href="#" class="nav-item" data-view="termes"><i class="fa-solid fa-spider text-primary"></i> TERMES Inverted APIs</a>
             </nav>
             <div class="sidebar-footer">
                 <div class="env-badge"><span class="dot live"></span> Sandbox Environment</div>
@@ -687,9 +691,98 @@
                     </div>
                 </div>
 
+                <!-- ═══════════════════════════════════════════════ -->
+                <!-- VIEW 6: BALLOM                                 -->
+                <!-- ═══════════════════════════════════════════════ -->
+                <div class="view-content hidden" id="view-ballom">
+                    <div class="section-title"><i class="fa-solid fa-masks-theater text-danger"></i> BALLOM — Synthetic API Engine & Morphs</div>
+                    
+                    <div class="grid-3-col mb-4">
+                        <div class="card glass p-4">
+                            <h4><i class="fa-solid fa-bolt text-danger"></i> Chitingate API Morphs</h4>
+                            <p class="text-muted text-small mt-2">Static JSON, Action Morphs & Proxy Morphs auto-deployed to CDN.</p>
+                            <span class="badge badge-primary mt-3">3 Active Endpoints</span>
+                        </div>
+                        <div class="card glass p-4">
+                            <h4><i class="fa-solid fa-key text-warning"></i> ScentKey Pheromone Auth</h4>
+                            <p class="text-muted text-small mt-2">Zero-server HMAC Signature Verification for APIs.</p>
+                            <span class="badge badge-warning mt-3">Verified (0xTERRA_8A2)</span>
+                        </div>
+                        <div class="card glass p-4">
+                            <h4><i class="fa-solid fa-bug text-accent"></i> Larvae Workers</h4>
+                            <p class="text-muted text-small mt-2">Background worker threads monitoring site changes.</p>
+                            <span class="badge badge-accent mt-3">2 Workers Running</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══════════════════════════════════════════════ -->
+                <!-- VIEW 7: TERMES                                 -->
+                <!-- ═══════════════════════════════════════════════ -->
+                <div class="view-content hidden" id="view-termes">
+                    <div class="section-title"><i class="fa-solid fa-spider text-primary"></i> TERMES — Inverted APIs & Web Digesting</div>
+                    
+                    <div class="grid-2-col mb-4">
+                        <div class="card glass p-4">
+                            <h4>🏰 Termitarium Extraction Spec</h4>
+                            <p class="text-muted text-small mt-2">Recipe: <code>terra-sandbox-monitor</code></p>
+                            <p class="text-small mt-1">Target: <code>https://amglogicalis.github.io/terra-sandbox-laboratory/</code></p>
+                            <span class="badge badge-primary mt-3">Stealth Proxy Enabled</span>
+                        </div>
+                        <div class="card glass p-4">
+                            <h4>🍄 Termitomyces Synthetic API</h4>
+                            <p class="text-muted text-small mt-2">Published to CDN at 0ms:</p>
+                            <a href="https://raw.githubusercontent.com/amglogicalis/termes-repo-public/gh-pages/api/v1/termes/spec_msc482qo_0ax4w.json" target="_blank" class="badge badge-accent mt-2" style="word-break: break-all;">🌐 Open Live Synthetic API JSON (200 OK)</a>
+                        </div>
+                    </div>
+
+                    <div class="card glass p-4">
+                        <h4>🦟 Alates Swarm & 🔄 Trophallaxis Bridges</h4>
+                        <div class="grid-2-col mt-3">
+                            <div>
+                                <span class="text-soft text-small">Inverted Webhook Rule:</span>
+                                <p class="text-small"><code>alates-sandbox-alert</code> (Dispatches on DOM change)</p>
+                            </div>
+                            <div>
+                                <span class="text-soft text-small">Multi-Cloud Bridges:</span>
+                                <p class="text-small"><code>bridge-combase-eventbus</code> &amp; <code>bridge-rolla-store</code></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div><!-- end content-scroll -->
         </main>
     </div><!-- end layout -->
+
+    <!-- ═══ BALLOM FEROMASK FLOATING OVERLAY WIDGET ═══ -->
+    <div class="feromask-widget" id="feromask-widget">
+        <div class="feromask-header" onclick="document.getElementById('feromask-widget').classList.toggle('collapsed')">
+            <div class="feromask-title">
+                <span class="feromask-pulse"></span>
+                <span>🎭 Feromask Live Suite</span>
+            </div>
+            <i class="fa-solid fa-chevron-down text-muted" style="font-size: 0.8rem;"></i>
+        </div>
+        <div class="feromask-body">
+            <div class="feromask-row">
+                <span class="text-muted">ScentKey Auth:</span>
+                <span class="feromask-value text-accent">0xTERRA_8A2 ✔</span>
+            </div>
+            <div class="feromask-row">
+                <span class="text-muted">Ballom Morphs:</span>
+                <span class="feromask-value text-warning">3 Live CDN</span>
+            </div>
+            <div class="feromask-row">
+                <span class="text-muted">TERMES Digestion:</span>
+                <span class="feromask-value text-primary">0ms CDN 200 OK</span>
+            </div>
+            <div class="feromask-row">
+                <span class="text-muted">Trophallaxis:</span>
+                <span class="feromask-value text-info">Combase &amp; Rolla</span>
+            </div>
+        </div>
+    </div>
 
     <!-- ═══ MODALS ═══ -->
     <div class="modal-backdrop hidden" id="modal-add-identity">

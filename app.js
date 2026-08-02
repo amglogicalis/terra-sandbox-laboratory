@@ -321,12 +321,14 @@ class TerraLabApp {
     if (navEl) navEl.classList.add('active');
     const titles = {
       overview: 'Overview & Metrics',
-      lumina:   'LUMINA Auth Suite',
-      rolla:    'ROLLA Storage Lab',
-      webbl:    'WEBBL Morphs & CDN',
-      combase:  'COMBASE Event Bus'
+      lumina: 'LUMINA Auth Suite',
+      rolla: 'ROLLA Storage Lab',
+      webbl: 'WEBBL Morphs & CDN',
+      combase: 'COMBASE Event Bus',
+      ballom: 'BALLOM Morph Studio',
+      termes: 'TERMES Inverted APIs'
     };
-    document.getElementById('current-view-title').textContent = titles[view] || view;
+    document.getElementById('current-view-title').textContent = titles[view] || 'Laboratory View';
     this.currentView = view;
 
     // Restore tabs for lumina
